@@ -13,7 +13,7 @@ jobs:
       - name: Setup Build Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libncursesw5-dev libglib2.0-dev libpixman-1-dev zip unzip git clang llvm lld
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libncursesw5-dev libglib2.0-dev libpixman-1-dev zip unzip git clang llvm lld gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
 
       - name: Fetch Toolchain
         run: |
