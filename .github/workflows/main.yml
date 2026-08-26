@@ -29,6 +29,8 @@ jobs:
           export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
           
           make O=out beryllium_defconfig
+          scripts/config --disable CONFIG_LTO --file out/.config
+          scripts/config --disable CONFIG_LTO_CLANG --file out/.config
           make -j$(nproc --all) O=out
 
       - name: Package AnyKernel3
