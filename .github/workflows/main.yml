@@ -51,5 +51,5 @@ jobs:
       - name: Upload Flashable Zip
         uses: actions/upload-artifact@v4
         with:
-          name: AnyKernel3-beryllium-ath9k
+          name: AnyKernel3-beryllinnum-ath9k
           path: AnyKernel3-beryllium-ath9k.zip
