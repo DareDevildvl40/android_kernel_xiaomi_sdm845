@@ -45,7 +45,7 @@ jobs:
           echo "CONFIG_WERROR=n" >> out/.config
 
           make O=out olddefconfig
-          make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
+          make -j1 O=out LLVM=1 LLVM_IAS=1
 
       - name: Package
         run: |
