@@ -47,7 +47,7 @@ jobs:
           sed -i '/crc32-arm64/d' arch/arm64/crypto/Makefile
 
           make O=out olddefconfig
-          make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
+          make -j1 O=out LLVM=1 LLVM_IAS=1
 
       - name: Package
         run: |
