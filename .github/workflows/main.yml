@@ -26,7 +26,6 @@ jobs:
           export CC=clang
           export CROSS_COMPILE=aarch64-linux-gnu-
           export CROSS_COMPILE_ARM32=arm-linux-gnueabi-
-          export KBUILD_CFLAGS="-Wno-error=misleading-indentation -Wno-error=bool-operation"
           
           make O=out beryllium_defconfig
           
@@ -48,7 +47,7 @@ jobs:
           sed -i '/crc32-arm64/d' arch/arm64/crypto/Makefile
 
           make O=out olddefconfig
-          make -j1 O=out LLVM=1 LLVM_IAS=1
+          make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1 KBUILD_CFLAGS="-Wno-error=misleading-indentation -Wno-error=bool-operation"
 
       - name: Package
         run: |
