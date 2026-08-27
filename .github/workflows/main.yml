@@ -1,3 +1,24 @@
+name: Build Beryllium Kernel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Setup Build Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev libncursesw5-dev libglib2.0-dev libpixman-1-dev zip unzip git clang llvm lld gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
+
+      - name: Fetch Toolchain
+        run: |
+          git clone --depth=1 https://github.com/kdrag0n/proton-clang.git $GITHUB_WORKSPACE/clang
+
       - name: Compile Kernel
         run: |
           export PATH="$GITHUB_WORKSPACE/clang/bin:$PATH"
@@ -19,3 +40,10 @@
           sed -i 's/CONFIG_LTO_CLANG=y/# CONFIG_LTO_CLANG is not set/' out/.config
           
           yes "" | make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
+
+      - name: Package AnyKernel3
+        run: |
+          git clone https://github.com/osm0sis/AnyKernel3.git AnyKernel
+          cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/ || cp out/arch/arm64/boot/Image.gz AnyKernel/ || cp out/arch/arm64/boot/Image AnyKernel/
+          cd AnyKernel
+          zip -r9 ../AnyKernel3-beryllium-ath9k.zip *
