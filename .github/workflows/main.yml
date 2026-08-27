@@ -19,4 +19,4 @@
           sed -i 's/CONFIG_LTO_CLANG=y/# CONFIG_LTO_CLANG is not set/' out/.config
           
           # This answers the interactive menu prompts automatically
-          yes "" | make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=11
+          yes "" | make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
