@@ -1,4 +1,24 @@
-      - name: Compile Kernel
+name: Build Beryllium Kernel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libncurses5-dev zip unzip git clang llvm lld gcc-aarch64-linux-gnu gcc-arm-linux-gnueabi
+
+      - name: Get Toolchain
+        run: |
+          git clone --depth=1 https://github.com/kdrag0n/proton-clang.git $GITHUB_WORKSPACE/clang
+
+      - name: Build Kernel
         run: |
           export PATH="$GITHUB_WORKSPACE/clang/bin:$PATH"
           export ARCH=arm64
@@ -13,12 +33,16 @@
           echo "CONFIG_MAC80211=y" >> out/.config
           echo "CONFIG_ATH_CARDS=y" >> out/.config
           echo "CONFIG_ATH9K_HTC=y" >> out/.config
-          echo "CONFIG_ATH9K_HTC_DEBUGFS=y" >> out/.config
           
           sed -i 's/CONFIG_LTO=y/# CONFIG_LTO is not set/' out/.config
           sed -i 's/CONFIG_LTO_CLANG=y/# CONFIG_LTO_CLANG is not set/' out/.config
           
-          # Automatically accept defaults for any new/modified config options
           make O=out olddefconfig
-          
           make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
+
+      - name: Package
+        run: |
+          git clone https://github.com/osm0sis/AnyKernel3.git AnyKernel
+          cp out/arch/arm64/boot/Image.gz-dtb AnyKernel/ || cp out/arch/arm64/boot/Image.gz AnyKernel/
+          cd AnyKernel
+          zip -r9 ../AnyKernel3-beryllium.zip *
