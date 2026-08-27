@@ -42,10 +42,12 @@ jobs:
           echo "CONFIG_CC_STACKPROTECTOR_NONE=y" >> out/.config
 
           sed -i 's/CONFIG_SHADOW_CALL_STACK=y/# CONFIG_SHADOW_CALL_STACK is not set/' out/.config
-          echo "CONFIG_WERROR=n" >> out/.config
+
+          # Disable the conflicting crc32-arm64 object from crypto Makefile
+          sed -i '/crc32-arm64/d' arch/arm64/crypto/Makefile
 
           make O=out olddefconfig
-          make -j1 O=out LLVM=1 LLVM_IAS=1
+          make -j$(nproc --all) O=out LLVM=1 LLVM_IAS=1
 
       - name: Package
         run: |
